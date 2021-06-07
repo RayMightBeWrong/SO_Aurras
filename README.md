@@ -1,12 +1,14 @@
 # SO_Aurras
 
 TO DO:
-- cliente
-	etc ...
-- servidor
-	etc ...
-- interface
-	etc ...
+- cliente:
+_ meter o primeiro a abrir o servidor
+_ etc...
+
+- servidor:
+_ etc...
+
+! sair direito se der SIGTERM
 
 
 PROBLEMAS:
@@ -14,3 +16,9 @@ PROBLEMAS:
 
 JÁ FEITO:
 ...
+
+
+
+
+
+
