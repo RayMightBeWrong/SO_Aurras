@@ -9,14 +9,9 @@
 
 #define BUFFER 1024
 
-int main(){
-	int firstToOpenMainFifo = 0;
-
-	if(mkfifo("fifo", 0666) == -1)
-		firstToOpenMainFifo = 1;
-
+int main(int argc, char *argv[]){
 	int res;
-	int file = open("fifo", O_WRONLY);
+	int file = open("99_fifo", O_WRONLY);
 	char buf[BUFFER];
 
 	while((res = read(0, buf, BUFFER)) > 0){
