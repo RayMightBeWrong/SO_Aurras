@@ -104,13 +104,32 @@ void fill_request_values(int *requests){
 		requests[i] = 0;	
 }
 
+char* getpid_arg(char *arg){
+	char *pid = malloc(sizeof(char) * 8);
+	
+	int i;
+	for(i = 0; arg[i] != '\0' && arg[i] != '_'; i++)
+		pid[i] = arg[i];
+
+	pid[i] = '\0';
+
+	return pid;
+}
+
+void sigALRM_handler(int signum){
+	alarm(1);
+}
+
+
 int main(int argc, char *argv[]){
 	signal(SIGINT, sigINT_handler);
-	char buf[BUFFER_SIZE];
+	signal(SIGALRM, sigALRM_handler);
+	char buf[BUFFER_SIZE]; memset(buf, 0, BUFFER_SIZE);
 	int nTasks = 4;
 	int requests[NR_FILTERS]; fill_request_values(requests);
 	char **tasks = malloc(sizeof(char *) * nTasks);
 
+	alarm(2);
 	if(argc == 3 && argsAreValid(argv)){
 		char ***config_file = readFilters(argv[1]);
 		//print_status(nTasks, tasks, config_file, requests);
@@ -120,8 +139,12 @@ int main(int argc, char *argv[]){
 
 		int main_fifo = open("99_fifo", O_RDONLY);
 		while(1){
-			while(read(main_fifo, buf, BUFFER_SIZE) > 0){
-				printf("%s\n", buf);
+			pause();
+			if(read(main_fifo, buf, BUFFER_SIZE) > 0){
+				printf("%s | %d\n", buf, atoi(getpid_arg(buf)));
+				int client_fifo = open(getpid_arg(buf), O_WRONLY);
+				printf("9\n");
+				write(client_fifo, "we good\n", 8);
 				memset(buf, 0, BUFFER_SIZE);
 			}
 		}
