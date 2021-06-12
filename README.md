@@ -9,7 +9,8 @@ _ etc...
 
 ! sair direito se der SIGTERM
 
-- corrigir erros
+- prevenir erros
+- pedido sozinho excede max
 - acordar servidor (pid + SIGALARM)
 
 PROBLEMAS:

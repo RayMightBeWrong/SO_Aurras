@@ -107,7 +107,7 @@ void fill_request_values(int *requests){
 int main(int argc, char *argv[]){
 	signal(SIGINT, sigINT_handler);
 	char buf[BUFFER_SIZE];
-	int res, nTasks = 4;
+	int nTasks = 4;
 	int requests[NR_FILTERS]; fill_request_values(requests);
 	char **tasks = malloc(sizeof(char *) * nTasks);
 
@@ -118,17 +118,15 @@ int main(int argc, char *argv[]){
 		if(mkfifo("99_fifo", 0666) == -1)
 			perror("mkfifo");
 
+		int main_fifo = open("99_fifo", O_RDONLY);
 		while(1){
-			int file = open("99_fifo", O_RDONLY);
-
-			while((res = read(file, buf, BUFFER_SIZE)) > 0){
-				printf("%s", buf);
+			while(read(main_fifo, buf, BUFFER_SIZE) > 0){
+				printf("%s\n", buf);
 				memset(buf, 0, BUFFER_SIZE);
 			}
-
-			close(file);
 		}
 
+		close(main_fifo);
 		unlink("99_fifo");
 	}
 	else{
