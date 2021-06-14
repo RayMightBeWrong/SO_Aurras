@@ -11,10 +11,11 @@ _ etc...
 
 - prevenir erros
 - pedido sozinho excede max
-- acordar servidor (pid + SIGALARM)
+- validar filtros
+- verificar se a pasta tem os filtros
 
 PROBLEMAS:
-...
+- múltiplos pedidos no mesmo segundo
 
 JÁ FEITO:
 ...

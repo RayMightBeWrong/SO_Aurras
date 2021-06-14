@@ -17,7 +17,7 @@ obj/aurras.o: src/aurras.c
 	gcc -Wall -g -c src/aurras.c -o obj/aurras.o
 
 clean:
-	rm obj/* tmp/* bin/{aurras,aurrasd}
+	rm obj/* tmp/* bin/aurras bin/aurrasd
 
 test:
 	bin/aurras samples/sample-1.mp3 tmp/sample-1.mp3

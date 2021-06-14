@@ -61,29 +61,87 @@ char* getpid_string(){
 	return pid;
 }
 
-int main(int argc, char *argv[]){
+void print_info(char *arg){
+	char *fst = " status\n";
+	char *snd = " transform input-filename output-filename filter-id-1 filter-id-2 ...\n";
+	write(1, arg, strlen(arg));
+	write(1, fst, strlen(fst));
+	write(1, arg, strlen(arg));
+	write(1, snd, strlen(snd));
+}
+
+int starts_with_pid(char *arg){
+	if (arg[0] == '\n' && arg[1] == 'p' && arg[2] == 'i' && arg[3] == 'd') return 1;
+	else if(arg[0] == 'p' && arg[1] == 'i' && arg[2] == 'd') return 1;
+	else return 0;
+}
+
+int is_status_last_line(char *arg){
+	int r = 0;
+
+	if(arg[0] == 'p') r = starts_with_pid(arg);
+	for(int i = 0; arg[i] != '\0' && !r; i++){
+		if(arg[i] == '\n')
+			r = starts_with_pid(arg + i);
+	}
+
+	return r;
+}
+
+int exe_status(int argc, char *argv[]){
 	int main_fifo = open("99_fifo", O_WRONLY);
 	char buf[BUFFER_SIZE]; memset(buf, 0, BUFFER_SIZE);
+	mkfifo(getpid_string(), 0666);
 
-	if(process_args(argc, argv) != -1){
-		mkfifo(getpid_string(), 0666);
-		char* request = request_to_server(argc, argv);
-		write(main_fifo, request, strlen(request));
-		int client_fifo = open(getpid_string(), O_RDONLY);
-		printf("|\n");
-		if(read(client_fifo, buf, BUFFER_SIZE) > 0){
-			write(1, buf, BUFFER_SIZE);
-		}
-		printf("?\n");
-		close(client_fifo);
-		unlink(getpid_string());
-	}
-	else{
-		char *error = "Argumentos não reconhecidos\n";
-		write(1, error, strlen(error));
+	char* request = request_to_server(argc, argv);
+	write(main_fifo, request, strlen(request));
+	int client_fifo = open(getpid_string(), O_RDONLY);
+
+	int bool = 1;
+	while(bool && read(client_fifo, buf, BUFFER_SIZE) > 0){
+		write(1, buf, BUFFER_SIZE);
+		if(is_status_last_line(buf))
+			bool = 0;
 	}
 
+	close(client_fifo); close(main_fifo);
+	unlink(getpid_string());
+	return 0;
+}
+
+int exe_transform(int argc, char *argv[]){
+	int main_fifo = open("99_fifo", O_WRONLY);
+	char buf[BUFFER_SIZE]; memset(buf, 0, BUFFER_SIZE);
+	mkfifo(getpid_string(), 0666);
+
+	char* request = request_to_server(argc, argv);
+	write(main_fifo, request, strlen(request));
+//	int client_fifo = open(getpid_string(), O_RDONLY);
+
+	//close(client_fifo); 
 	close(main_fifo);
 	unlink(getpid_string());
+	return 0;
+}
+
+int main(int argc, char *argv[]){
+	int process = process_args(argc, argv);
+	char *error = "Argumentos não reconhecidos\n";
+	
+	switch(process){
+		case -1: write(1, error, strlen(error));
+			 break;
+
+		case  0: print_info(argv[0]);
+			 break;
+		
+		case  1: exe_status(argc, argv); 
+			 break;
+
+		case  2: exe_transform(argc, argv);
+			 break;
+
+	}
+
 	return 0;
 }
