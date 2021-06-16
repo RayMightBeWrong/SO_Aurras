@@ -75,7 +75,6 @@ int main(int argc, char *argv[]){
 									_exit(0);
 								}
 								else{
-									printf("pid: %d\n", fork_ret);
 									manage_requests(requests, args, size, config_file, 1);
 									pid_tasks[free] = fork_ret;
 									tasks[free] = rm_pid_from_request(buf[free]); 

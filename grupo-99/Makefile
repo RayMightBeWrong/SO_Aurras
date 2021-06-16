@@ -31,4 +31,4 @@ openServer:
 test:
 	bin/aurras
 	bin/aurras status
-	bin/aurras transform samples/sample-1-so.m4a output.mp3 alto eco rapido
+	bin/aurras transform samples/sample-1-so.m4a output.mp3 alto eco
