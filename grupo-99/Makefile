@@ -25,7 +25,10 @@ obj/auxAurras.o: src/auxAurras.c include/auxAurras.h
 clean:
 	rm obj/* tmp/* bin/aurras bin/aurrasd
 
+openServer:
+	bin/aurrasd etc/aurrasd.conf bin/aurrasd-filters
+
 test:
 	bin/aurras
 	bin/aurras status
-	bin/aurras samples/sample-1-so.m4a output.mp3 alto eco rapido
+	bin/aurras transform samples/sample-1-so.m4a output.mp3 alto eco rapido
